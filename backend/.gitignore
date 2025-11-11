@@ -1,0 +1,56 @@
+# ===================================================
+# FOLDER WAJIB (Jangan pernah upload ini)
+# ===================================================
+
+# 1. Dependencies
+# Ini folder utama yang isinya semua library
+node_modules/
+
+# 2. Hasil Compile TypeScript
+# Ini folder output JS-nya, dibikin otomatis
+dist/
+
+# ===================================================
+# FILE RAHASIA (!!!)
+# ===================================================
+
+# 3. Kredensial & Secret Key
+# JANGAN PERNAH UPLOAD FILE .env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===================================================
+# LOG & DEBUGGING
+# ===================================================
+
+# Log dari NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Log dari PM2 (kalo nanti pake)
+*.log
+
+# ===================================================
+# PRISMA
+# ===================================================
+# Kalo pake SQLite (kita sih nggak, tapi buat jaga-jaga)
+*.db
+*.db-journal
+
+# ===================================================
+# OS & EDITOR
+# ===================================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VS Code (opsional, tapi bagus)
+.vscode/
+*.code-workspace

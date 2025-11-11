@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    // === Target & Module ===
+    "target": "es6",
+    "module": "commonjs",
+
+    // === Struktur Folder ===
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // === Import/Export (WAJIB ADA) ===
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // === Strictness (Seperlunya) ===
+    "strict": true,
+    "skipLibCheck": true // Biar cepet, ga usah cek library
+  },
+  "include": ["src/**/*"], // Cuma compile yang di folder src
+  "exclude": ["node_modules"]
+}

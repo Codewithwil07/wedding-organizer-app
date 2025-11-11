@@ -11,7 +11,6 @@ model User {
   id_user   Int      @id @default(autoincrement())
   username  String   @db.VarChar(100)
   password  String   @db.VarChar(100)
-  nama_user String   @db.VarChar(100)
   email     String   @unique @db.VarChar(50)
   role      RoleEnum
 
@@ -26,6 +25,7 @@ model Dokumentasi {
   deskripsi String           @db.VarChar(200)
   harga     Int
   jenis     JenisDokumEnum
+  image_url String? @db.VarChar(255)
 
   pesanan Pesanan[]
 
@@ -37,6 +37,7 @@ model Busana {
   nama      String  @db.VarChar(100)
   deskripsi String  @db.VarChar(200)
   harga     Int
+  image_url String? @db.VarChar(255)
 
   pesanan Pesanan[]
 
@@ -49,6 +50,7 @@ model Dekorasi {
   deskripsi   String              @db.VarChar(200)
   harga       Int
   jenis       JenisDekorasiEnum
+  image_url String? @db.VarChar(255)
 
   pesanan Pesanan[]
 
@@ -60,6 +62,7 @@ model AkadResepsi {
   nama      String  @db.VarChar(100)
   deskripsi String  @db.VarChar(200)
   harga     Int
+  image_url String? @db.VarChar(255)
 
   pesanan Pesanan[]
 
