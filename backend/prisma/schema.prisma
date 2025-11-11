@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id_user   Int      @id @default(autoincrement())
+  username  String   @db.VarChar(100)
+  password  String   @db.VarChar(100)
+  nama_user String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(50)
+  role      RoleEnum
+
+  pesanan Pesanan[]
+
+  @@map("user")
+}
+
+model Dokumentasi {
+  id_dokum  Int              @id @default(autoincrement())
+  nama      String           @db.VarChar(100)
+  deskripsi String           @db.VarChar(200)
+  harga     Int
+  jenis     JenisDokumEnum
+
+  pesanan Pesanan[]
+
+  @@map("dokumentasi")
+}
+
+model Busana {
+  id_busana Int     @id @default(autoincrement())
+  nama      String  @db.VarChar(100)
+  deskripsi String  @db.VarChar(200)
+  harga     Int
+
+  pesanan Pesanan[]
+
+  @@map("busana")
+}
+
+model Dekorasi {
+  id_dekorasi Int                 @id @default(autoincrement())
+  nama        String              @db.VarChar(100)
+  deskripsi   String              @db.VarChar(200)
+  harga       Int
+  jenis       JenisDekorasiEnum
+
+  pesanan Pesanan[]
+
+  @@map("dekorasi")
+}
+
+model AkadResepsi {
+  id_ar     Int     @id @default(autoincrement())
+  nama      String  @db.VarChar(100)
+  deskripsi String  @db.VarChar(200)
+  harga     Int
+
+  pesanan Pesanan[]
+
+  @@map("akadresepsi")
+}
+
+model Pesanan {
+  id_pesan    Int       @id @default(autoincrement())
+  harga       Int
+  status      StatusPesananEnum @default(pending) 
+  alamat      String    @db.VarChar(100)
+  waktu_awal  DateTime  @db.Date
+  waktu_akhir DateTime  @db.Date
+
+  id_user Int
+  user    User  @relation(fields: [id_user], references: [id_user])
+
+  id_dokum    Int?
+  dokumentasi Dokumentasi? @relation(fields: [id_dokum], references: [id_dokum])
+
+  id_busana   Int?
+  busana      Busana?      @relation(fields: [id_busana], references: [id_busana])
+
+  id_dekorasi Int?
+  dekorasi    Dekorasi?    @relation(fields: [id_dekorasi], references: [id_dekorasi])
+
+  id_ar       Int?
+  akadResepsi AkadResepsi? @relation(fields: [id_ar], references: [id_ar])
+
+  @@map("pesanan")
+}
+
+enum RoleEnum {
+  admin
+  pemesan
+}
+
+enum JenisDokumEnum {
+  photo
+}
+
+enum JenisDekorasiEnum {
+  koade
+}
+
+// TAMBAHAN BARU DI SINI
+enum StatusPesananEnum {
+  pending
+  diterima
+  ditolak
+}
