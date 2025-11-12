@@ -1,24 +1,50 @@
 import { Router } from "express";
-import { validate } from "../middlewares/validate.middleware";
-import { asyncHandler } from "../utils/asynchandler";
-import { protect, isAdmin } from "../middlewares/auth.middleware";
+// ... (imports lama lo) ...
+
+// 1. IMPORT SKEMA BARU
 import {
+  createBusanaSchema,
+  updateBusanaSchema,
+  createDekorasiSchema,
+  updateDekorasiSchema,
+  createAkadResepsiSchema,
+  updateAkadResepsiSchema,
+  paginationQuerySchema,
+  paketParamsSchema,
   createDokumentasiSchema,
   updateDokumentasiSchema,
-  paketParamsSchema,
-  paginationQuerySchema,
 } from "../schemas/paket.schema";
+
+// 2. IMPORT CONTROLLER BARU
 import {
+  createBusanaController,
+  getAllBusanaAdminController,
+  getBusanaByIdController,
+  updateBusanaController,
+  deleteBusanaController,
+  createDekorasiController,
+  getAllDekorasiAdminController,
+  getDekorasiByIdController,
+  updateDekorasiController,
+  deleteDekorasiController,
+  createAkadResepsiController,
+  getAllAkadResepsiAdminController,
+  getAkadResepsiByIdController,
+  updateAkadResepsiController,
+  deleteAkadResepsiController,
   createDokumentasiController,
   getAllDokumentasiAdminController,
+  getDokumentasiByIdController,
   updateDokumentasiController,
   deleteDokumentasiController,
-  getDokumentasiByIdController, 
 } from "../controllers/paket.controller";
+import { isAdmin, protect } from "../middlewares/auth.middleware";
+import { validate } from "../middlewares/validate.middleware";
+import { asyncHandler } from "../utils/asynchandler";
+import { getAllPesananAdminController, updateStatusPesananController } from "../controllers/pesanan.controller";
+import { updateStatusSchema } from "../schemas/pesanan.schema";
 
 const router = Router();
-
-// Pasang 'satpam' di semua rute /api/admin/*
 router.use(protect);
 router.use(isAdmin);
 
@@ -40,7 +66,7 @@ router.get(
 router.get(
   "/paket/dokumentasi/:id",
   validate(paketParamsSchema),
-  asyncHandler(getDokumentasiByIdController) // (Pake controller yg sama dgn public)
+  asyncHandler(getDokumentasiByIdController)
 );
 
 // (U)PDATE: PUT /api/admin/paket/dokumentasi/:id
@@ -55,6 +81,107 @@ router.delete(
   "/paket/dokumentasi/:id",
   validate(paketParamsSchema),
   asyncHandler(deleteDokumentasiController)
+);
+
+// ===================================================
+// TAMBAHKAN RUTE 'BUSANA'
+// ===================================================
+router.post(
+  "/paket/busana",
+  validate(createBusanaSchema),
+  asyncHandler(createBusanaController)
+);
+router.get(
+  "/paket/busana",
+  validate(paginationQuerySchema),
+  asyncHandler(getAllBusanaAdminController)
+);
+router.get(
+  "/paket/busana/:id",
+  validate(paketParamsSchema),
+  asyncHandler(getBusanaByIdController)
+);
+router.put(
+  "/paket/busana/:id",
+  validate(updateBusanaSchema),
+  asyncHandler(updateBusanaController)
+);
+router.delete(
+  "/paket/busana/:id",
+  validate(paketParamsSchema),
+  asyncHandler(deleteBusanaController)
+);
+
+// ===================================================
+// TAMBAHKAN RUTE 'DEKORASI'
+// ===================================================
+router.post(
+  "/paket/dekorasi",
+  validate(createDekorasiSchema),
+  asyncHandler(createDekorasiController)
+);
+router.get(
+  "/paket/dekorasi",
+  validate(paginationQuerySchema),
+  asyncHandler(getAllDekorasiAdminController)
+);
+router.get(
+  "/paket/dekorasi/:id",
+  validate(paketParamsSchema),
+  asyncHandler(getDekorasiByIdController)
+);
+router.put(
+  "/paket/dekorasi/:id",
+  validate(updateDekorasiSchema),
+  asyncHandler(updateDekorasiController)
+);
+router.delete(
+  "/paket/dekorasi/:id",
+  validate(paketParamsSchema),
+  asyncHandler(deleteDekorasiController)
+);
+
+// ===================================================
+// TAMBAHKAN RUTE 'AKAD & RESEPSI'
+// ===================================================
+router.post(
+  "/paket/akadresepsi",
+  validate(createAkadResepsiSchema),
+  asyncHandler(createAkadResepsiController)
+);
+router.get(
+  "/paket/akadresepsi",
+  validate(paginationQuerySchema),
+  asyncHandler(getAllAkadResepsiAdminController)
+);
+router.get(
+  "/paket/akadresepsi/:id",
+  validate(paketParamsSchema),
+  asyncHandler(getAkadResepsiByIdController)
+);
+router.put(
+  "/paket/akadresepsi/:id",
+  validate(updateAkadResepsiSchema),
+  asyncHandler(updateAkadResepsiController)
+);
+router.delete(
+  "/paket/akadresepsi/:id",
+  validate(paketParamsSchema),
+  asyncHandler(deleteAkadResepsiController)
+);
+
+// PESANAN
+router.get(
+  "/pesanan",
+  validate(paginationQuerySchema),
+  asyncHandler(getAllPesananAdminController)
+);
+
+// (U)PDATE STATUS: PUT /api/admin/pesanan/:id/status
+router.put(
+  "/pesanan/:id/status",
+  validate(updateStatusSchema),
+  asyncHandler(updateStatusPesananController)
 );
 
 export default router;

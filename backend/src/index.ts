@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Router Utama
 app.use("/api", mainRouter);
-app.use('/api/upload', uploadRouter);
+app.use("/api/upload", uploadRouter);
 
 // ===================================================
 //  GLOBAL ERROR HANDLER (PENANGKAP)
@@ -40,7 +40,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       message: `${target} sudah terdaftar, silakan gunakan ${target} lain.`,
     });
   }
-  
 
   // Handle error custom dari service (misal 'Password salah')
   if (
@@ -50,6 +49,28 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     return res
       .status(401)
       .json({ message: "Email atau password yang Anda masukkan salah." });
+  }
+  // ===================================================
+  // TAMBAHAN BARU UNTUK PESANAN
+  // ===================================================
+  if (err.message === "FORBIDDEN") {
+    return res.status(403).json({
+      message: "Akses ditolak. Anda tidak punya izin untuk aksi ini.",
+    });
+  }
+  if (err.message === "PESANAN_ALREADY_PROCESSED") {
+    return res.status(400).json({
+      message:
+        "Aksi gagal. Pesanan ini sudah diproses (Diterima/Ditolak/Dibatalkan).",
+    });
+  }
+  
+  // Kalo user nyoba hapus pesanan yg udah DI-TERIMA
+  if (err.message === "BOOKING_CONFIRMED") {
+    return res.status(400).json({
+      message:
+        "Tidak bisa dibatalkan. Pesanan ini sudah dikonfirmasi oleh admin.",
+    });
   }
 
   // Fallback error 500 (kalo errornya ga dikenal)

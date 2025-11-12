@@ -108,9 +108,9 @@ enum JenisDekorasiEnum {
   koade
 }
 
-// TAMBAHAN BARU DI SINI
 enum StatusPesananEnum {
   pending
   diterima
   ditolak
+  dibatalkan
 }
