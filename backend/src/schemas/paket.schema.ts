@@ -29,9 +29,9 @@ export const paketParamsSchema = z.object({
 const createBodySchema = z.object({
   nama: z.string({ required_error: "Nama paket wajib diisi" }).min(3),
   deskripsi: z.string({ required_error: "Deskripsi wajib diisi" }).min(10),
-  harga: z.number({ required_error: "Harga wajib diisi" }).int().positive(),
-  jenis: z.enum(["photo"], { required_error: "Jenis paket wajib 'photo'" }),
-  image_url: z.string().url("URL gambar tidak valid").optional().nullable(),
+  harga: z.number({ invalid_type_error: 'Harga harus angka' }).min(1, 'Harga wajib diisi'),
+  jenis: z.enum(['photo']),
+  image_url: z.string().min(1, 'URL gambar wajib diisi').optional().nullable(),
 });
 
 export const createDokumentasiSchema = z.object({
@@ -56,8 +56,8 @@ export const updateDokumentasiSchema = z.object({
 const busanaBodySchema = z.object({
   nama: z.string({ required_error: 'Nama paket wajib diisi' }).min(3),
   deskripsi: z.string({ required_error: 'Deskripsi wajib diisi' }).min(10),
-  harga: z.number({ required_error: 'Harga wajib diisi' }).int().positive(),
-  image_url: z.string().url('URL gambar tidak valid').optional().nullable(),
+  harga: z.number({ invalid_type_error: 'Harga harus angka' }).min(1, 'Harga wajib diisi'),
+  image_url: z.string().min(1, 'URL gambar tidak valid').optional().nullable(),
 });
 
 // Skema Create
@@ -78,9 +78,9 @@ export const updateBusanaSchema = z.object({
 const dekorasiBodySchema = z.object({
   nama: z.string({ required_error: 'Nama paket wajib diisi' }).min(3),
   deskripsi: z.string({ required_error: 'Deskripsi wajib diisi' }).min(10),
-  harga: z.number({ required_error: 'Harga wajib diisi' }).int().positive(),
+  harga: z.number({ invalid_type_error: 'Harga harus angka' }).min(1, 'Harga wajib diisi'),
   jenis: z.enum(['koade'], { required_error: "Jenis paket wajib 'koade'" }), 
-  image_url: z.string().url('URL gambar tidak valid').optional().nullable(),
+  image_url: z.string().min(1, 'URL gambar tidak valid').optional().nullable(),
 });
 
 export const createDekorasiSchema = z.object({
@@ -101,8 +101,8 @@ export const updateDekorasiSchema = z.object({
 const akadResepsiBodySchema = z.object({
   nama: z.string({ required_error: 'Nama paket wajib diisi' }).min(3),
   deskripsi: z.string({ required_error: 'Deskripsi wajib diisi' }).min(10),
-  harga: z.number({ required_error: 'Harga wajib diisi' }).int().positive(),
-  image_url: z.string().url('URL gambar tidak valid').optional().nullable(),
+  harga: z.number({ invalid_type_error: 'Harga harus angka' }).min(1, 'Harga wajib diisi'),
+  image_url: z.string().min(1, 'URL gambar tidak valid').optional().nullable(),
 });
 
 export const createAkadResepsiSchema = z.object({

@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction } from "express"; // 
 import cors from "cors";
 import dotenv from "dotenv";
 import mainRouter from "./routes";
+import path from 'path'; // <--
 import uploadRouter from "./routes/upload.routes";
 
 // Inisialisasi dotenv
@@ -14,6 +15,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Router Utama
 app.use("/api", mainRouter);
@@ -81,5 +84,5 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Jalanin Server
 app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server CWO siap di http://localhost:${PORT}`);
+  console.log(`⚡️[server]: Server CWO siap di PORT:${PORT}`);
 });

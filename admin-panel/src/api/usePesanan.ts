@@ -19,10 +19,9 @@ export interface Pesanan {
   alamat: string;
   waktu_awal: string; // (Ini string ISO Date)
   user: {
-    nama_user: string;
+    username: string;
     email: string;
   };
-  // Kita bisa 'include' paket-paketnya kalo mau, tapi buat list admin cukup 'user'
 }
 
 // Fungsi 'fetcher' yang bakal dipake SWR

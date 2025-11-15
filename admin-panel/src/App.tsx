@@ -1,26 +1,34 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import DashboardLayout from "./components/DashboardLayout";
 
-// Bikin 'skeleton' (file kosong) dulu buat halaman-halaman ini:
+// 1. Import Halaman Login & Pesanan (Dashboard)
 import LoginPage from "./pages/auth/LoginPage";
-import PaketPage from "./pages/paket/PaketPage";
 import PesananPage from "./pages/pesanan/PesananPage";
-import DashboardLayout from "./components/DashboardLayout"; // (Kita bikin ini)
+
+// 2. Import 4 Halaman Paket BARU
+import DokumentasiPage from "./pages/paket/DokumentasiPage";
+import BusanaPage from "./pages/paket/BusanaPage";
+import DekorasiPage from "./pages/paket/DekorasiPage";
+import AkadResepsiPage from "./pages/paket/AkadResepsiPage";
 
 function App() {
   return (
     <Routes>
-      {/* Rute Publik: Halaman Login */}
+      {/* Rute Publik */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Rute Privat (WAJIB LOGIN) */}
+      {/* Rute Privat (Bungkus pake Layout) */}
       <Route element={<ProtectedRoute />}>
-        {/* Pake Layout biar ada Sidebar/Header (NANTI) */}
         <Route element={<DashboardLayout />}>
-          <Route path="/" element={<PesananPage />} />{" "}
-          {/* Halaman utama = Pesanan */}
-          <Route path="/paket" element={<PaketPage />} />
-          {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+          {/* 3. Rute Halaman Utama */}
+          <Route path="/" element={<PesananPage />} />
+
+          {/* 4. Rute Halaman Paket (BARU) */}
+          <Route path="/paket/dokumentasi" element={<DokumentasiPage />} />
+          <Route path="/paket/busana" element={<BusanaPage />} />
+          <Route path="/paket/dekorasi" element={<DekorasiPage />} />
+          <Route path="/paket/akadresepsi" element={<AkadResepsiPage />} />
         </Route>
       </Route>
 
@@ -29,12 +37,5 @@ function App() {
     </Routes>
   );
 }
-
-// Bikin file 'skeleton' (kosong) biar ga error
-// src/pages/auth/LoginPage.tsx -> export default function LoginPage() { return <div>Login</div>; }
-// src/pages/paket/PaketPage.tsx -> export default function PaketPage() { return <div>Paket</div>; }
-// src/pages/pesanan/PesananPage.tsx -> export default function PesananPage() { return <div>Pesanan</div>; }
-// src/components/DashboardLayout.tsx -> import { Outlet } from 'react-router-dom';
-//                                     export default function DashboardLayout() { return <div><Outlet /></div>; }
 
 export default App;
