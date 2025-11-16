@@ -13,7 +13,8 @@ model User {
   password  String   @db.VarChar(100)
   email     String   @unique @db.VarChar(50)
   role      RoleEnum
-
+  passwordResetToken   String?   @unique // (Simpen 6-digit OTP di sini)
+  passwordResetExpires DateTime? // (Simpen waktu kadaluarsa OTP)
   pesanan Pesanan[]
 
   @@map("user")

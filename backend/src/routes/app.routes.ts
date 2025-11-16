@@ -22,6 +22,8 @@ import {
 import { protect } from "../middlewares/auth.middleware";
 import { createPesananSchema } from "../schemas/pesanan.schema";
 import { cancelPesananController, createPesananController, getMyPesananController } from "../controllers/pesanan.controller";
+import { getMyProfileController, updateMyProfileController } from "../controllers/user.controller";
+
 
 const router = Router();
 
@@ -115,5 +117,21 @@ router.put(
   validate(paketParamsSchema),
   asyncHandler(cancelPesananController)
 );
+
+// (R)EAD MY: GET /api/app/profil
+router.get(
+  "/profil",
+  protect, // <-- WAJIB LOGIN
+  asyncHandler(getMyProfileController)
+);
+
+// (P)EAD MY: PUT /api/app/profil/:id
+router.put(
+  "/profil",
+  protect, // <-- WAJIB LOGIN
+  asyncHandler(updateMyProfileController)
+);
+
+
 
 export default router;

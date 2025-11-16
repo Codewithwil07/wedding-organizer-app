@@ -76,6 +76,29 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
   }
 
+  if (
+    err.message === "User tidak ditemukan" ||
+    err.message === "Password salah"
+  ) {
+    return res
+      .status(401)
+      .json({ message: "Email atau password yang Anda masukkan salah." });
+  }
+
+  // ===================================================
+  // TAMBAHAN BARU UNTUK LUPA PASSWORD
+  // ===================================================
+  if (err.message === 'USER_NOT_FOUND') {
+    return res.status(404).json({
+      message: 'User dengan email tersebut tidak ditemukan.',
+    });
+  }
+  if (err.message === 'TOKEN_INVALID_OR_EXPIRED') {
+    return res.status(400).json({
+      message: 'Token OTP salah atau sudah kadaluarsa.',
+    });
+  }
+
   // Fallback error 500 (kalo errornya ga dikenal)
   res.status(500).json({
     message: err.message || "Terjadi kesalahan pada server, coba lagi nanti.",
