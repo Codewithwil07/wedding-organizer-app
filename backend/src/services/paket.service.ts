@@ -53,10 +53,10 @@ export class PaketService {
       }),
       orderBy: { id_dokum: "asc" },
       select: {
-        // App publik ga perlu semua data
         id_dokum: true,
         nama: true,
         harga: true,
+        deskripsi: true,
         image_url: true,
       },
     });
@@ -91,7 +91,7 @@ export class PaketService {
     await prisma.dokumentasi.delete({
       where: { id_dokum: parseInt(id) },
     });
-    return; 
+    return;
   }
 
   // ===================================================
@@ -119,7 +119,13 @@ export class PaketService {
       take: limit + 1,
       ...(cursor && { cursor: { id_busana: cursor }, skip: 1 }),
       orderBy: { id_busana: "asc" },
-      select: { id_busana: true, nama: true, harga: true, image_url: true },
+      select: {
+        id_busana: true,
+        nama: true,
+        harga: true,
+        deskripsi: true,
+        image_url: true,
+      },
     });
     let nextCursor: number | null = null;
     if (data.length > limit) nextCursor = data.pop()!.id_busana;
@@ -127,7 +133,9 @@ export class PaketService {
   }
 
   static async getBusanaById(id: string) {
-    return prisma.busana.findUniqueOrThrow({ where: { id_busana: parseInt(id) } });
+    return prisma.busana.findUniqueOrThrow({
+      where: { id_busana: parseInt(id) },
+    });
   }
 
   static async updateBusana(id: string, data: UpdateBusanaBody) {
@@ -167,6 +175,7 @@ export class PaketService {
         id_dekorasi: true,
         nama: true,
         harga: true,
+        deskripsi: true,
         image_url: true,
         jenis: true,
       },
@@ -177,11 +186,16 @@ export class PaketService {
   }
 
   static async getDekorasiById(id: string) {
-    return prisma.dekorasi.findUniqueOrThrow({ where: { id_dekorasi: parseInt(id) } });
+    return prisma.dekorasi.findUniqueOrThrow({
+      where: { id_dekorasi: parseInt(id) },
+    });
   }
 
   static async updateDekorasi(id: string, data: UpdateDekorasiBody) {
-    return prisma.dekorasi.update({ where: { id_dekorasi: parseInt(id) }, data });
+    return prisma.dekorasi.update({
+      where: { id_dekorasi: parseInt(id) },
+      data,
+    });
   }
 
   static async deleteDekorasi(id: string) {
@@ -213,7 +227,7 @@ export class PaketService {
       take: limit + 1,
       ...(cursor && { cursor: { id_ar: cursor }, skip: 1 }),
       orderBy: { id_ar: "asc" },
-      select: { id_ar: true, nama: true, harga: true, image_url: true },
+      select: { id_ar: true, nama: true, harga: true, deskripsi: true, image_url: true },
     });
     let nextCursor: number | null = null;
     if (data.length > limit) nextCursor = data.pop()!.id_ar;
@@ -221,7 +235,9 @@ export class PaketService {
   }
 
   static async getAkadResepsiById(id: string) {
-    return prisma.akadResepsi.findUniqueOrThrow({ where: { id_ar: parseInt(id) } });
+    return prisma.akadResepsi.findUniqueOrThrow({
+      where: { id_ar: parseInt(id) },
+    });
   }
 
   static async updateAkadResepsi(id: string, data: UpdateAkadResepsiBody) {

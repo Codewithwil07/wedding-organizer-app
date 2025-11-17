@@ -110,7 +110,7 @@ router.get(
   asyncHandler(getMyPesananController)
 );
 
-// (D)ELETE: DELETE /api/app/pesanan/:id
+// (D)PUT: PUT /api/app/pesanan/:id
 router.put(
   "/pesanan/:id",
   protect, // <-- WAJIB LOGIN
