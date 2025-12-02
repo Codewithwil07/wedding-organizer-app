@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/auth.store";
 
 const api = axios.create({
   // PENTING: Pake IP lo, BUKAN localhost
-  baseURL: "http://localhost:3000/api",
+  baseURL: "http://192.168.0.117:3000/api",
 });
 
 // "Interceptor" (Satpam otomatis)

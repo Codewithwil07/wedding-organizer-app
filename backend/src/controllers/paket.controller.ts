@@ -319,3 +319,19 @@ export const deleteAkadResepsiController = async (
   await PaketService.deleteAkadResepsi(req.params.id);
   res.status(204).send();
 };
+
+// ... imports ...
+
+// === HOME DASHBOARD DATA ===
+// === HOME DASHBOARD DATA ===
+export const getHomeDataController = async (req: Request, res: Response) => {
+  // Ambil query 'q' dari URL (cth: /home?q=makeup)
+  const query = (req.query.q as string) || "";
+
+  const data = await PaketService.getHomeData(query);
+
+  res.status(200).json({
+    message: "Berhasil mengambil data home",
+    data: data,
+  });
+};

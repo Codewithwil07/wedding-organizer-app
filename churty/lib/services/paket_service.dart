@@ -28,4 +28,29 @@ class PaketService {
       rethrow;
     }
   }
+
+  // GET HOME DATA (Updated with Search)
+  Future<Map<String, List<PaketModel>>> getHomeData({String query = ''}) async {
+    try {
+      // Kirim query ke backend
+      final response = await _dio.get(
+        '/app/home',
+        queryParameters: {'q': query},
+      );
+      final data = response.data['data'];
+
+      List<PaketModel> parseList(List items) {
+        return items
+            .map((json) => PaketModel.fromJson(json, json['tipe']))
+            .toList();
+      }
+
+      return {
+        'terlaris': parseList(data['terlaris']),
+        'terbaru': parseList(data['terbaru']),
+      };
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

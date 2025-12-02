@@ -227,7 +227,13 @@ export class PaketService {
       take: limit + 1,
       ...(cursor && { cursor: { id_ar: cursor }, skip: 1 }),
       orderBy: { id_ar: "asc" },
-      select: { id_ar: true, nama: true, harga: true, deskripsi: true, image_url: true },
+      select: {
+        id_ar: true,
+        nama: true,
+        harga: true,
+        deskripsi: true,
+        image_url: true,
+      },
     });
     let nextCursor: number | null = null;
     if (data.length > limit) nextCursor = data.pop()!.id_ar;
@@ -246,5 +252,63 @@ export class PaketService {
 
   static async deleteAkadResepsi(id: string) {
     return prisma.akadResepsi.delete({ where: { id_ar: parseInt(id) } });
+  }
+  // ===================================================
+  // API KHUSUS HOME (Dashboard App)
+  // ===================================================
+  // API HOME (SIMPEL + SEARCH)
+  // ===================================================
+  static async getHomeData(searchQuery: string = "") {
+    // 1. Bikin filter pencarian (kalo ada query)
+    const whereClause = searchQuery
+      ? { nama: { contains: searchQuery } } // (MySQL default case-insensitive)
+      : {};
+
+    // 2. Ambil data dari semua tabel (pake filter tadi)
+    const [dokum, busana, dekorasi, ar] = await Promise.all([
+      prisma.dokumentasi.findMany({
+        where: whereClause,
+        take: 5,
+        orderBy: { id_dokum: "desc" },
+      }),
+      prisma.busana.findMany({
+        where: whereClause,
+        take: 5,
+        orderBy: { id_busana: "desc" },
+      }),
+      prisma.dekorasi.findMany({
+        where: whereClause,
+        take: 5,
+        orderBy: { id_dekorasi: "desc" },
+      }),
+      prisma.akadResepsi.findMany({
+        where: whereClause,
+        take: 5,
+        orderBy: { id_ar: "desc" },
+      }),
+    ]);
+
+    // 3. Format data
+    const format = (items: any[], tipe: string) =>
+      items.map((item) => ({
+        ...item,
+        tipe,
+        id: item.id_dokum || item.id_busana || item.id_dekorasi || item.id_ar,
+      }));
+
+    const allItems = [
+      ...format(dokum, "dokumentasi"),
+      ...format(busana, "busana"),
+      ...format(dekorasi, "dekorasi"),
+      ...format(ar, "akadresepsi"),
+    ];
+
+    // 4. Balikin data
+    // "Terlaris" kita isi 5 item pertama aja (random/terbaru)
+    // "Terbaru" kita isi sisanya
+    return {
+      terlaris: allItems.slice(0, 5),
+      terbaru: allItems,
+    };
   }
 }

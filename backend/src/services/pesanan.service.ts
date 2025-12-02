@@ -20,9 +20,49 @@ export class PesananService {
       alamat,
       waktu_awal,
       waktu_akhir,
+      no_wa,
+      latitude,
+      longitude,
     } = data;
 
-    // 1. HITUNG TOTAL HARGA (BIAR AMAN, DI SISI SERVER)
+    const tglMulai = new Date(waktu_awal);
+    const tglSelesai = new Date(waktu_akhir);
+
+    // ===================================================
+    // 1. LOGIC CEK BENTROK (REVISI DOSEN)
+    // ===================================================
+    // Kita cari: Adakah pesanan lain yg statusnya 'PENDING' atau 'DITERIMA'
+    // yang punya paket SAMA dan tanggalnya BERTABRAKAN?
+
+    const conflictingOrder = await prisma.pesanan.findFirst({
+      where: {
+        // Status yg dianggap "sedang dipakai"
+        status: { in: [StatusPesananEnum.pending, StatusPesananEnum.diterima] },
+
+        // Cek Tabrakan Tanggal
+        AND: [
+          { waktu_awal: { lte: tglSelesai } }, // Awal pesanan lama <= Akhir pesanan baru
+          { waktu_akhir: { gte: tglMulai } }, // Akhir pesanan lama >= Awal pesanan baru
+        ],
+
+        // Cek Kesamaan Paket (Salah satu paket sama = Bentrok)
+        OR: [
+          // Kalo user pesen Dokum, cek ada gak yg pesen Dokum ID yg sama
+          id_dokum && { id_dokum: id_dokum },
+          id_busana && { id_busana: id_busana },
+          id_dekorasi && { id_dekorasi: id_dekorasi },
+          id_ar && { id_ar: id_ar },
+        ].filter(Boolean) as any, // (Filter yang null biar gak error query)
+      },
+    });
+
+    if (conflictingOrder) {
+      // Kalo ketemu, LEMPAR ERROR
+      throw new Error("JADWAL_BENTROK");
+    }
+    // ===================================================
+
+    // ... (Logic hitung harga TETAP SAMA kayak sebelumnya) ...
     let totalHarga = 0;
     if (id_dokum) {
       const paket = await prisma.dokumentasi.findUnique({
@@ -48,13 +88,15 @@ export class PesananService {
     // 2. Buat Pesanan
     const pesananBaru = await prisma.pesanan.create({
       data: {
-        id_user: userId, // <-- Ambil dari user yg login
-        status: StatusPesananEnum.pending, // <-- Default
+        id_user: userId,
+        status: StatusPesananEnum.pending,
         harga: totalHarga,
         alamat,
-        waktu_awal,
-        waktu_akhir,
-        // Sambungin ke paket-paket yg dipilih
+        waktu_awal: tglMulai,
+        waktu_akhir: tglSelesai,
+        no_wa,
+        latitude,
+        longitude,
         id_dokum,
         id_busana,
         id_dekorasi,
@@ -64,7 +106,6 @@ export class PesananService {
 
     return pesananBaru;
   }
-
   /**
    * (USER) Liat history pesanan dia sendiri
    */
@@ -82,6 +123,28 @@ export class PesananService {
       },
     });
   }
+
+  static async getPesananDetailById(pesananId: string, userId: number) {
+    // 1. Ambil pesanan beserta detail paketnya
+    const pesanan = await prisma.pesanan.findUniqueOrThrow({
+      where: { id_pesan: parseInt(pesananId) },
+      include: {
+        dokumentasi: { select: { nama: true, harga: true, image_url: true } },
+        busana: { select: { nama: true, harga: true, image_url: true } },
+        dekorasi: { select: { nama: true, harga: true, image_url: true } },
+        akadResepsi: { select: { nama: true, harga: true, image_url: true } },
+      },
+    });
+
+    // 2. CEK KEAMANAN: Pesanan ini punya dia bukan?
+    // Kalo user iseng ganti ID di URL, kita tolak.
+    if (pesanan.id_user !== userId) {
+      throw new Error("FORBIDDEN");
+    }
+
+    return pesanan;
+  }
+  // ===================================================
 
   /**
    * (USER) Batalin pesanan dia sendiri

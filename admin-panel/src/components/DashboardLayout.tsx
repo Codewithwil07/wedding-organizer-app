@@ -1,21 +1,24 @@
-import { AppShell, Burger, Group, NavLink, Title } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { IconUsers } from "@tabler/icons-react";
+import { IconMessageExclamation } from "@tabler/icons-react"; // <-- Import Icon
+import { AppShell, Burger, Group, NavLink, Title } from "@mantine/core";
+import { IconNews } from "@tabler/icons-react"; // <-- Import IconNews
+import { useDisclosure } from "@mantine/hooks";
 // 1. IMPORT ICON-ICON BARU
-import { 
-  IconHome, 
-  IconPackage, 
+import {
+  IconHome,
+  IconPackage,
   IconLogout,
   IconPhoto,
   IconWoman,
   IconDiamond,
-  IconReceipt
-} from '@tabler/icons-react';
+  IconReceipt,
+} from "@tabler/icons-react";
 import {
   NavLink as RouterNavLink,
   Outlet,
   useNavigate,
-} from 'react-router-dom';
-import { useAuthStore } from '../store/auth.store';
+} from "react-router-dom";
+import { useAuthStore } from "../store/auth.store";
 
 export default function DashboardLayout() {
   const [opened, { toggle }] = useDisclosure();
@@ -24,13 +27,13 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 250, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      navbar={{ width: 250, breakpoint: "sm", collapsed: { mobile: !opened } }}
       padding="md"
     >
       {/* Header (Tetap Sama) */}
@@ -51,7 +54,14 @@ export default function DashboardLayout() {
           to="/"
           onClick={toggle}
         />
-        
+        {/* === TAMBAHIN INI === */}
+        <NavLink
+          label="Berita & Info"
+          leftSection={<IconNews size="1rem" />}
+          component={RouterNavLink}
+          to="/berita"
+          onClick={toggle}
+        />
         {/* 2. Menu Paket (BERUBAH JADI COLLAPSIBLE) */}
         <NavLink
           label="Manajemen Paket"
@@ -60,35 +70,50 @@ export default function DashboardLayout() {
         >
           {/* 3. Sub-Menu (BARU) */}
           <NavLink
-            label="Dokumentasi" 
+            label="Dokumentasi"
             leftSection={<IconPhoto size="0.8rem" />}
             component={RouterNavLink}
             to="/paket/dokumentasi" // <-- Rute baru
             onClick={toggle}
           />
           <NavLink
-            label="Busana & MUA" 
+            label="Busana & MUA"
             leftSection={<IconWoman size="0.8rem" />}
             component={RouterNavLink}
             to="/paket/busana" // <-- Rute baru
             onClick={toggle}
           />
           <NavLink
-            label="Dekorasi" 
+            label="Dekorasi"
             leftSection={<IconDiamond size="0.8rem" />}
             component={RouterNavLink}
             to="/paket/dekorasi" // <-- Rute baru
             onClick={toggle}
           />
           <NavLink
-            label="Akad & Resepsi" 
+            label="Akad & Resepsi"
             leftSection={<IconReceipt size="0.8rem" />}
             component={RouterNavLink}
             to="/paket/akadresepsi" // <-- Rute baru
             onClick={toggle}
           />
         </NavLink>
-
+        {/* ... Menu Berita ... */}
+        <NavLink
+          label="Kritik & Saran"
+          leftSection={<IconMessageExclamation size="1rem" />}
+          component={RouterNavLink}
+          to="/kritik"
+          onClick={toggle}
+        />
+        {/* MENU BARU */}
+        <NavLink
+          label="Manajemen Admin"
+          leftSection={<IconUsers size="1rem" />}
+          component={RouterNavLink}
+          to="/admin-list"
+          onClick={toggle}
+        />
         {/* 4. Link Logout (Tetap Sama) */}
         <NavLink
           label="Logout"

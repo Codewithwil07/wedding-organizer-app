@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../dashboard/dashboard_screen.dart';
 import 'register_screen.dart'; 
-import 'forgot_password_screen.dart'; // Pastikan ini di-import
+import 'forgot_password_screen.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +16,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  // State buat mata password
+  bool _isPasswordVisible = false;
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -30,7 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
       
-      // Kalo sukses, pindah ke Dashboard
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const DashboardScreen()),
       );
@@ -78,17 +80,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
+                // === INPUT PASSWORD DENGAN MATA ===
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.lock),
+                    // Tombol Mata
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  // Logic hide/show
+                  obscureText: !_isPasswordVisible,
                   validator: (val) =>
                       val!.length < 6 ? 'Password minimal 6 karakter' : null,
                 ),
+                // ==================================
+
                 const SizedBox(height: 24),
 
                 isLoading
@@ -105,18 +122,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 16),
                 
-                // Link Lupa Password (FIXED: Gak pake const)
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context, 
-                      MaterialPageRoute(builder: (_) => ForgotPasswordScreen()) // <-- HAPUS CONST DI SINI
+                      MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())
                     );
                   },
                   child: const Text("Lupa Password?", style: TextStyle(color: Colors.grey)),
                 ),
 
-                // Link Register (FIXED: Gak pake const)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -125,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         Navigator.push(
                           context, 
-                          MaterialPageRoute(builder: (_) => RegisterScreen()) // <-- HAPUS CONST DI SINI
+                          MaterialPageRoute(builder: (_) => const RegisterScreen())
                         );
                       },
                       child: const Text("Daftar", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),

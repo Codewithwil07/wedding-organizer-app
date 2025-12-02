@@ -13,6 +13,10 @@ export const createPesananSchema = z.object({
       id_dekorasi: z.number().int().optional().nullable(), // <-- TAMBAHIN .nullable()
       id_ar: z.number().int().optional().nullable(), // <-- TAMBAHIN .nullable()
 
+      no_wa: z.string().min(11, "Nomor WA tidak valid").optional().nullable(), // Wajib/Opsional terserah lo
+      latitude: z.string().optional().nullable(),
+      longitude: z.string().optional().nullable(),
+
       // Alamat & Tanggal
       alamat: z.string({ required_error: "Alamat wajib diisi" }),
       waktu_awal: z.coerce.date({

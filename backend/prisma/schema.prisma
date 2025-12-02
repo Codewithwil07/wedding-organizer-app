@@ -7,26 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ===================================================
+// MODEL USER (Admin & Pemesan) [cite: 615-619]
+// ===================================================
 model User {
   id_user   Int      @id @default(autoincrement())
-  username  String   @db.VarChar(100)
+  username  String?  @db.VarChar(100) // (Opsional, kita pake email buat login)
   password  String   @db.VarChar(100)
   email     String   @unique @db.VarChar(50)
   role      RoleEnum
-  passwordResetToken   String?   @unique // (Simpen 6-digit OTP di sini)
-  passwordResetExpires DateTime? // (Simpen waktu kadaluarsa OTP)
-  pesanan Pesanan[]
+
+  // Reset Password
+  passwordResetToken   String?   @unique
+  passwordResetExpires DateTime?
+
+  // RELASI
+  pesanan     Pesanan[]
+  kritikSaran KritikSaran[] // Relasi ke kritik saran
 
   @@map("user")
 }
 
+// ... (MODEL PAKET: Dokumentasi, Busana, Dekorasi, AkadResepsi TETAP SAMA) ...
 model Dokumentasi {
-  id_dokum  Int              @id @default(autoincrement())
-  nama      String           @db.VarChar(100)
-  deskripsi String           @db.VarChar(200)
+  id_dokum  Int            @id @default(autoincrement())
+  nama      String         @db.VarChar(100)
+  deskripsi String         @db.VarChar(200)
   harga     Int
   jenis     JenisDokumEnum
-  image_url String? @db.VarChar(255)
+  image_url String?        @db.VarChar(255)
 
   pesanan Pesanan[]
 
@@ -46,12 +55,12 @@ model Busana {
 }
 
 model Dekorasi {
-  id_dekorasi Int                 @id @default(autoincrement())
-  nama        String              @db.VarChar(100)
-  deskripsi   String              @db.VarChar(200)
+  id_dekorasi Int               @id @default(autoincrement())
+  nama        String            @db.VarChar(100)
+  deskripsi   String            @db.VarChar(200)
   harga       Int
   jenis       JenisDekorasiEnum
-  image_url String? @db.VarChar(255)
+  image_url   String?           @db.VarChar(255)
 
   pesanan Pesanan[]
 
@@ -70,25 +79,35 @@ model AkadResepsi {
   @@map("akadresepsi")
 }
 
+// ===================================================
+// MODEL PESANAN (UPDATE REVISI) 
+// ===================================================
 model Pesanan {
-  id_pesan    Int       @id @default(autoincrement())
+  id_pesan    Int               @id @default(autoincrement())
   harga       Int
-  status      StatusPesananEnum @default(pending) 
-  alamat      String    @db.VarChar(100)
-  waktu_awal  DateTime  @db.Date
-  waktu_akhir DateTime  @db.Date
+  status      StatusPesananEnum @default(pending)
+  alamat      String            @db.VarChar(100)
+  waktu_awal  DateTime          @db.Date
+  waktu_akhir DateTime          @db.Date
 
+  // === KOLOM BARU (REVISI DOSEN) ===
+  latitude  String? @db.VarChar(50) // Koordinat Lokasi
+  longitude String? @db.VarChar(50) // Koordinat Lokasi
+  no_wa     String? @db.VarChar(20) // Nomor WA Pemilik Acara
+  // =================================
+
+  // Relasi
   id_user Int
-  user    User  @relation(fields: [id_user], references: [id_user])
+  user    User @relation(fields: [id_user], references: [id_user])
 
   id_dokum    Int?
   dokumentasi Dokumentasi? @relation(fields: [id_dokum], references: [id_dokum])
 
-  id_busana   Int?
-  busana      Busana?      @relation(fields: [id_busana], references: [id_busana])
+  id_busana Int?
+  busana    Busana? @relation(fields: [id_busana], references: [id_busana])
 
   id_dekorasi Int?
-  dekorasi    Dekorasi?    @relation(fields: [id_dekorasi], references: [id_dekorasi])
+  dekorasi    Dekorasi? @relation(fields: [id_dekorasi], references: [id_dekorasi])
 
   id_ar       Int?
   akadResepsi AkadResepsi? @relation(fields: [id_ar], references: [id_ar])
@@ -96,6 +115,35 @@ model Pesanan {
   @@map("pesanan")
 }
 
+// ===================================================
+// MODEL BERITA (BARU - REVISI DOSEN)
+// ===================================================
+model Berita {
+  id_berita Int      @id @default(autoincrement())
+  judul     String   @db.VarChar(200)
+  isi       String   @db.Text // Pake Text biar muat banyak
+  image_url String?  @db.VarChar(255)
+  tanggal   DateTime @default(now())
+
+  @@map("berita")
+}
+
+// ===================================================
+// MODEL KRITIK & SARAN (BARU - REVISI DOSEN)
+// ===================================================
+model KritikSaran {
+  id_ks   Int      @id @default(autoincrement())
+  isi     String   @db.Text
+  balasan String?  @db.Text // Balasan admin (bisa null kalo belum dibalas)
+  tanggal DateTime @default(now())
+
+  id_user Int
+  user    User @relation(fields: [id_user], references: [id_user])
+
+  @@map("kritik_saran")
+}
+
+// ENUMS
 enum RoleEnum {
   admin
   pemesan

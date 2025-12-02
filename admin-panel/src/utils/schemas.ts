@@ -97,3 +97,30 @@ export type CreateAkadResepsiData = z.infer<typeof createAkadResepsiSchema>;
 
 export const updateAkadResepsiSchema = createAkadResepsiSchema.partial();
 export type UpdateAkadResepsiData = z.infer<typeof updateAkadResepsiSchema>;
+
+
+// ===================================================
+// SKEMA BERITA (BARU)
+// ===================================================
+export const createBeritaSchema = z.object({
+  judul: z.string().min(5, 'Judul berita minimal 5 karakter'),
+  isi: z.string().min(10, 'Isi berita minimal 10 karakter'),
+  image_url: z.string().min(1, 'URL gambar wajib diisi').optional().nullable(),
+});
+export type CreateBeritaData = z.infer<typeof createBeritaSchema>;
+
+export const updateBeritaSchema = createBeritaSchema.partial();
+export type UpdateBeritaData = z.infer<typeof updateBeritaSchema>;
+
+
+
+// ... (schema berita dll) ...
+
+// ===================================================
+// SKEMA KRITIK & SARAN (BARU)
+// ===================================================
+// Admin cuma perlu input 'balasan'
+export const replyKritikSchema = z.object({
+  balasan: z.string().min(5, 'Balasan minimal 5 karakter'),
+});
+export type ReplyKritikData = z.infer<typeof replyKritikSchema>;

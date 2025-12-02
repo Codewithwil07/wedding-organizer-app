@@ -55,7 +55,10 @@ export const getAllPesananAdminController = async (
   res: Response
 ) => {
   // 1. Ambil 'cursor' & 'limit' dari query (sebagai string)
-  const { cursor: cursorString, limit: limitString } = req.query as { cursor?: string, limit?: string };
+  const { cursor: cursorString, limit: limitString } = req.query as {
+    cursor?: string;
+    limit?: string;
+  };
 
   // 2. Pinterin di sini: Konversi & Kasih Default
   const cursor = cursorString ? Number(cursorString) : undefined;
@@ -63,12 +66,12 @@ export const getAllPesananAdminController = async (
 
   // 3. Bikin object 'query' yang bersih buat service
   const query = { cursor, limit };
-  
+
   // 4. Lempar ke service
   const hasil = await PesananService.getAllPesananAdmin(query);
-  
+
   res.status(200).json({
-    message: 'Berhasil mengambil semua pesanan',
+    message: "Berhasil mengambil semua pesanan",
     ...hasil,
   });
 };
@@ -86,5 +89,24 @@ export const updateStatusPesananController = async (
   res.status(200).json({
     message: `Pesanan berhasil di-${status.toLowerCase()}`,
     data: pesananUpdate,
+  });
+};
+
+// ... imports
+
+// === (USER) Get Pesanan Detail by ID ===
+export const getMyPesananByIdController = async (
+  req: Request<PaketParams>,
+  res: Response
+) => {
+  const user = req.user as User;
+  const { id } = req.params;
+
+  // Service ini pastikan udah ada juga
+  const pesanan = await PesananService.getPesananDetailById(id, user.id_user);
+
+  res.status(200).json({
+    message: "Berhasil mengambil detail pesanan",
+    data: pesanan,
   });
 };

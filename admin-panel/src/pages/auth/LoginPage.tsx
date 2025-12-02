@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,8 @@ import {
   Title,
   Stack,
   Alert,
-  Paper, // <-- Pake Paper biar rapih
+  Paper,
+  Group, // <-- Pake Paper biar rapih
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 
@@ -79,7 +81,6 @@ function LoginPage() {
                 {error}
               </Alert>
             )}
-
             {/* Input Email (dari Mantine + RHF) */}
             <TextInput
               label="Email"
@@ -87,7 +88,6 @@ function LoginPage() {
               {...register("email")}
               error={errors.email?.message}
             />
-
             {/* Input Password (dari Mantine + RHF) */}
             <PasswordInput
               label="Password"
@@ -95,6 +95,20 @@ function LoginPage() {
               {...register("password")}
               error={errors.password?.message}
             />
+
+            {/* === TAMBAHAN LINK === */}
+            <Group justify="flex-end" mt="xs">
+              <Link
+                to="/forgot-password"
+                style={{
+                  fontSize: "12px",
+                  color: "#228be6",
+                  textDecoration: "none",
+                }}
+              >
+                Lupa password?
+              </Link>
+            </Group>
 
             <Button type="submit" loading={isSubmitting} fullWidth mt="xl">
               Login

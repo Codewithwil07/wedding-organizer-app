@@ -18,12 +18,20 @@ import {
   // Akad Resepsi
   getAllAkadResepsiPublicController,
   getAkadResepsiByIdController,
+  getHomeDataController,
 } from "../controllers/paket.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { createPesananSchema } from "../schemas/pesanan.schema";
-import { cancelPesananController, createPesananController, getMyPesananController } from "../controllers/pesanan.controller";
-import { getMyProfileController, updateMyProfileController } from "../controllers/user.controller";
-
+import {
+  cancelPesananController,
+  createPesananController,
+  getMyPesananByIdController,
+  getMyPesananController,
+} from "../controllers/pesanan.controller";
+import {
+  getMyProfileController,
+  updateMyProfileController,
+} from "../controllers/user.controller";
 
 const router = Router();
 
@@ -110,6 +118,14 @@ router.get(
   asyncHandler(getMyPesananController)
 );
 
+// / 3. Liat Detail Pesanan (INI YANG TADINYA HILANG!)
+router.get(
+  "/pesanan/:id", // <-- Endpoint GET by ID
+  protect,
+  validate(paketParamsSchema), // Validasi ID angka
+  asyncHandler(getMyPesananByIdController)
+);
+
 // (D)PUT: PUT /api/app/pesanan/:id
 router.put(
   "/pesanan/:id",
@@ -132,6 +148,44 @@ router.put(
   asyncHandler(updateMyProfileController)
 );
 
+router.get("/home", asyncHandler(getHomeDataController));
 
+// ... imports yang lain ...
+import {
+  getAllBeritaController,
+  getBeritaByIdController,
+} from "../controllers/berita.controller";
+
+// ... rute paket yang udah ada ...
+
+// ===================================================
+// RUTE BERITA (PUBLIC - APP)
+// ===================================================
+router.get("/berita", asyncHandler(getAllBeritaController));
+router.get(
+  "/berita/:id",
+  validate(paketParamsSchema),
+  asyncHandler(getBeritaByIdController)
+);
+
+// ... imports
+import { createKritikSchema } from "../schemas/kritik.schema";
+import {
+  createKritikController,
+  getMyKritikController,
+} from "../controllers/kritik.controller";
+
+// ... (rute pesanan) ...
+
+// ===================================================
+// RUTE KRITIK & SARAN (USER)
+// ===================================================
+router.post(
+  "/kritik",
+  protect,
+  validate(createKritikSchema),
+  asyncHandler(createKritikController)
+);
+router.get("/kritik/saya", protect, asyncHandler(getMyKritikController));
 
 export default router;

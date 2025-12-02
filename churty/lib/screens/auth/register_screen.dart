@@ -11,24 +11,27 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _namaController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  // Dua state terpisah buat mata
+  bool _isPasswordVisible = false;
+  bool _isConfirmVisible = false;
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
       await Provider.of<AuthProvider>(context, listen: false).register(
-        _usernameController.text,
+        _namaController.text,
         _emailController.text,
         _passwordController.text,
       );
 
       if (!mounted) return;
       
-      // Sukses -> Balik ke Login & Kasih Pesan
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registrasi Berhasil! Silakan Login."), backgroundColor: Colors.green),
       );
@@ -53,15 +56,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // Nama
               TextFormField(
-                controller: _usernameController,
+                controller: _namaController,
                 decoration: const InputDecoration(labelText: 'Nama Lengkap', border: OutlineInputBorder()),
                 validator: (val) => val!.isEmpty ? 'Nama wajib diisi' : null,
               ),
               const SizedBox(height: 16),
               
-              // Email
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
@@ -69,25 +70,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Password
+              // === PASSWORD 1 ===
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password', 
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                  ),
+                ),
+                obscureText: !_isPasswordVisible,
                 validator: (val) => val!.length < 6 ? 'Minimal 6 karakter' : null,
               ),
               const SizedBox(height: 16),
 
-              // Confirm Password
+              // === PASSWORD 2 ===
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(labelText: 'Konfirmasi Password', border: OutlineInputBorder()),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Konfirmasi Password', 
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(_isConfirmVisible ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () => setState(() => _isConfirmVisible = !_isConfirmVisible),
+                  ),
+                ),
+                obscureText: !_isConfirmVisible,
                 validator: (val) => val != _passwordController.text ? 'Password tidak cocok' : null,
               ),
               const SizedBox(height: 24),
 
-              // Button
               SizedBox(
                 width: double.infinity,
                 child: isLoading

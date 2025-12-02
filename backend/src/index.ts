@@ -2,7 +2,7 @@ import express, { Express, Request, Response, NextFunction } from "express"; // 
 import cors from "cors";
 import dotenv from "dotenv";
 import mainRouter from "./routes";
-import path from 'path'; // <--
+import path from "path"; // <--
 import uploadRouter from "./routes/upload.routes";
 
 // Inisialisasi dotenv
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Router Utama
 app.use("/api", mainRouter);
@@ -67,7 +67,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         "Aksi gagal. Pesanan ini sudah diproses (Diterima/Ditolak/Dibatalkan).",
     });
   }
-  
+
   // Kalo user nyoba hapus pesanan yg udah DI-TERIMA
   if (err.message === "BOOKING_CONFIRMED") {
     return res.status(400).json({
@@ -88,16 +88,31 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   // ===================================================
   // TAMBAHAN BARU UNTUK LUPA PASSWORD
   // ===================================================
-  if (err.message === 'USER_NOT_FOUND') {
+  if (err.message === "USER_NOT_FOUND") {
     return res.status(404).json({
-      message: 'User dengan email tersebut tidak ditemukan.',
+      message: "User dengan email tersebut tidak ditemukan.",
     });
   }
-  if (err.message === 'TOKEN_INVALID_OR_EXPIRED') {
+  if (err.message === "TOKEN_INVALID_OR_EXPIRED") {
     return res.status(400).json({
-      message: 'Token OTP salah atau sudah kadaluarsa.',
+      message: "Token OTP salah atau sudah kadaluarsa.",
     });
   }
+
+  if (err.message === "PESANAN_ALREADY_PROCESSED") {
+    return res.status(400).json({
+      message: "Aksi gagal. Pesanan ini sudah diproses.",
+    });
+  }
+
+  // === TAMBAHAN BARU (BENTROK) ===
+  if (err.message === "JADWAL_BENTROK") {
+    return res.status(409).json({
+      message:
+        "Gagal! Salah satu paket yang dipilih SUDAH DIPESAN oleh orang lain di tanggal tersebut. Silakan pilih tanggal atau paket lain.",
+    });
+  }
+  // ===============================
 
   // Fallback error 500 (kalo errornya ga dikenal)
   res.status(500).json({

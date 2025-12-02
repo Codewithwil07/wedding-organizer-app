@@ -18,6 +18,10 @@ export interface Pesanan {
   status: StatusPesananEnum; // PENDING, DITERIMA, DITOLAK, DIBATALKAN
   alamat: string;
   waktu_awal: string; // (Ini string ISO Date)
+  waktu_akhir: string; // (Ini string ISO Date)
+  no_wa?: string; // Bisa null/undefined
+  latitude?: string;
+  longitude?: string;
   user: {
     username: string;
     email: string;
